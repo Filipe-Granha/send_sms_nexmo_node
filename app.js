@@ -4,6 +4,12 @@ const ejs = require("ejs");
 const Nexmo = require("nexmo");
 const socketIo = require("socket.io");
 
+// init Nexmo
+const nexmo = new Nexmo({
+	apiKey: "a43e6d49",
+	apiSecret: "fce302f21c26140e"
+}, {debug: true});
+
 // init app
 
 const app = express();
@@ -24,6 +30,28 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.get("/", (req, res) => {
 	res.render("index");
 });
+
+// catch form submit
+app.post("/", (req, res) => {
+	// res.send(req.body);
+	// console.log(req.body);
+
+	const number = req.body.number;
+	const text = req.body.text;
+
+	nexmo.message.sendSms(
+		"NEXMO", number, text, {type: "unicode"},
+		(err, responseData) => {
+			if(err) {
+				console.log(err);
+			} else {
+					console.dir(responseData);
+				}
+		}
+		);
+
+});
+
 
 //define port
 const port = 3000;
